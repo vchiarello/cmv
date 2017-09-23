@@ -1,0 +1,324 @@
+
+        <!-- Page Content -->
+        <div id="page-wrapper">
+           <div class="row">
+               <div class="col-lg-12">
+                   <h1 class="page-header"></h1>
+               </div>
+               <!-- /.col-lg-12 -->
+           </div>
+           <!-- /.row -->
+
+
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="height:50px" >
+                        	<div class="col-sm-6" style="position: relative;">
+                        		Eventi/segnalazioni e ordinanze
+                        	</div>
+                            <div class="col-sm-6" style="position: relative;text-align: right;">
+                            	
+                            </div>
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+
+							<div class="col-sm-12" ng-show="filtro" style="height: 10px;" >
+								<a ui-sref="telecamere" ng-click="mostraFiltro(false)">Nascondi filtro</a>
+							</div>		
+							<div class="col-sm-12" ng-show="filtro" style="height: 150px;" >
+							
+									
+									<div style="display: inline;padding-left:10px;">
+										<label style="vertical-align: middle;display: inline-block;" for="visibilita">Tipo:</label> 
+										<select id="tipo" name="tipo" ng-model="tipoSelezionato">
+											<option value="">Tutte</option>
+<!-- 											<option ng-repeat="option in tipo" value="{{option.id_tipo}}">{{option.tipo}}</option> -->
+										</select>
+									</div>
+									
+									<div style="display: inline;padding-left:10px;">
+										<label style="vertical-align: middle;display: inline-block;" for="regione">Compartimento:</label> 
+										<select style="vertical-align: middle;display: inline-block;" id="compartimenti" name="compartimenti" ng-model="compartimentoSelezionato" multiple="multiple" size="4">
+											<option ng-repeat="option in compartimenti" value="{{option.id_compartimento}}">{{option.compartimento}}</option>
+										</select>
+									</div>
+									
+<!-- 									<div style="display: inline;padding-left:10px;"> -->
+<!-- 									<label style="vertical-align: middle;display: inline-block;" for="regione">Velocita:</label>  -->
+<!-- 										<select style="display: inline-block;" id="regione" name="regione" ng-model="operatoreVelocita"> -->
+<!-- 											<option  value=">">Maggiore</option> -->
+<!-- 											<option  value="<">Minore</option> -->
+<!-- 											<option  value="=">Uguale</option> -->
+<!-- 										</select> -->
+<!-- 										<input style="width:70px;"id="velocitaSelezionata" name="velocitaSelezionata" type="text" value="" ng-model="velocitaSelezionata"/> -->
+<!-- 									</div> -->
+<!-- 									<div style="display: inline;padding-left:10px;"> -->
+									
+<!-- 										<label style="vertical-align: middle;display: inline-block;" for="strada">Strada:</label>  -->
+<!-- 										<input id="strada" name="strada" type="text" value="" ng-model="nomeStrada"/> -->
+<!-- 									</div> -->
+									
+									<div style="display: inline;padding-left:10px;">
+										<button type="button" class="btn btn-primary btn-xs" ng-click="applicaFiltro()">
+			                                        <span class="glyphicon glyphicon-search"></span> <span>Cerca</span>
+			                            </button>
+		                            </div>
+		                            
+							</div>
+
+							<div class="col-sm-12" ng-show="!filtro" style="height: 100px;">
+									
+									<a ui-sref="telecamere" ng-click="mostraFiltro(true)">Mostra filtro</a>
+							</div>
+
+
+		
+
+							<div class="col-sm-4" style="height:50px;">
+								<div class="dataTables_info" id="dataTables-example_info" role="status" aria-live="polite">
+								Stai vedendo le righe da {{30*eventi.paginaCorrente+1}} a {{30*eventi.paginaCorrente+eventi.obj.length}} di {{eventi.totaleRecord}}.
+								</div>
+							</div>
+							<div class="col-sm-8">
+								<div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate" style="text-align:right;">
+								<ul class="pagination" style="margin:0;height:50px;">
+								
+									<li class="paginate_button previous" ng-class="disableFirst()">
+										<a ui-sref="traffico" ng-click="vaiA(pagina-1)"><</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(0)" >
+										<a  ui-sref="traffico" ng-click="vaiA(0)">1</a>
+									</li>
+									<li class="paginate_button" ng-show="puntiniIniziali(pagina,traffico.totalePagine)">
+										<a  ui-sref="traffico">...</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[0])" ng-show="almenoPagine(2,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[0])">{{navigatore[0]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[1])" ng-show="almenoPagine(3,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[1])">{{navigatore[1]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[2])" ng-show="almenoPagine(4,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[2])">{{navigatore[2]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[3])" ng-show="almenoPagine(5,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[3])">{{navigatore[3]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[4])" ng-show="almenoPagine(6,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[4])">{{navigatore[4]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[5])" ng-show="almenoPagine(7,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[5])">{{navigatore[5]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[6])" ng-show="almenoPagine(8,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[6])">{{navigatore[6]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[7])" ng-show="almenoPagine(9,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[7])">{{navigatore[7]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[8])" ng-show="almenoPagine(10,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[8])">{{navigatore[8]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-show="puntiniFinali(pagina,traffico.totalePagine)">
+										<a  ui-sref="traffico">...</a>
+									</li>
+									<li class="paginate_button next" ng-class="isPaginaAttiva(traffico.totalePagine-1)" ng-show="almenoPagine(11,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(traffico.totalePagine-1)">{{traffico.totalePagine}}</a>
+									</li>
+									<li class="paginate_button next" ng-class="disableLast()" >
+										<a  ui-sref="traffico" ng-click="vaiA(pagina+1)"">></a>
+									</li>
+								</ul>
+								</div>
+							</div>
+							<div cg-busy="{promise:promessa,message:messaggio,templateUrl:'./html/templateAttendere.html'}">
+								<div ng-repeat="riga in eventi.obj">
+		                            <table width="100%" class="table table-striped table-bordered table-hover dataTableVito" id="dataTables-example">
+	                                    <tr>
+	                                        <td>
+	                                        	<img ng-show="riga.esito_invio_cmv==1 || riga.esito_invio_cmv==2" src="./images/esitoRmt1-2.png">
+	                                        	<img ng-show="riga.esito_invio_cmv==-2 || riga.esito_invio_cmv==-4 || riga.esito_invio_cmv==-5 || riga.esito_invio_cmv==-6" src="./images/esitoRmtNegativo.png">
+	                                        	<img ng-show="riga.esito_invio_cmv==3 || riga.esito_invio_cmv==4" src="./images/esitoRmt3-4.png">
+	                                        	<img ng-show="riga.esito_invio_cmv==-3" src="./images/esitoRmt-3.png">
+	                                        	<img ng-show="iconaAsterisco(riga)" src="./images/asterisco.png">
+	                                        	<img ng-show="iconaBandieraVerde(riga)" src="./images/bandieraVerde.png">
+	                                        	<img ng-show="iconaBandieraRossa(riga)" src="./images/bandieraRossa.png">
+	                                        	<img ng-show="iconaBandieraRossaLamp(riga)" src="./images/bandieraRossaAnimata.gif">
+	                                        	<img ng-show="iconaEsclamazioneGialla(riga)" src="./images/EsclamazioneGialla.png">
+	                                        	<img ng-show="iconaEsclamazioneRossa(riga)" src="./images/EsclamazioneRossa.png">
+	                                        	<img ng-show="iconaEsclamazioneGiallaLamp(riga)" src="./images/EsclamazioneGiallaAnimata.gif">
+	                                        	<img ng-show="riga.evento=='evento'" src="./images/evento.png">
+	                                        	<img ng-show="riga.evento=='ordinanza'" src="./images/ordinanza.png">
+	                                        </td>
+	                                        <td>{{riga.descrizione}}</td>
+	                                        <td>		
+	                                        	<button type="button" class="btn btn-primary btn-xs" ng-click="invioCCISS(riga)">
+				                                        <span class="glyphicon glyphicon-search"></span> <span>Blocco invio CCISS</span>
+				                            	</button>
+				                            </td>
+				                        </tr>     
+	                                    <tr>
+	                                        <td><b>Stato: </b>{{riga.stato}}
+	                                        </td>
+	                                        <td><b>Strada: </b>{{riga.strada}}
+	                                        </td>
+	                                        <td>		
+	                                        	<button type="button" class="btn btn-primary btn-xs" ng-click="modifica(riga)">
+				                                        <span class="glyphicon glyphicon-search"></span> <span>Modifica</span>
+				                            	</button>
+				                            </td>
+				                        </tr>     
+	                                    <tr>
+	                                        <td><b>Causa: </b>{{riga.descrizione_causa}}</td>
+	                                        <td><b>Note pubbliche: </b>{{riga.note_pubbliche}}
+	                                        </td>
+	                                        <td>		
+	                                        	<button type="button" class="btn btn-primary btn-xs" ng-click="dettaglio(riga)">
+				                                        <span class="glyphicon glyphicon-search"></span> <span>Dettaglio</span>
+				                            	</button>
+				                            </td>
+				                        </tr>     
+	                                    <tr>
+	                                        <td><b>Direzione: </b>{{riga.direzione}}</td>
+	                                        <td><b>Note CCISS: </b>{{riga.note_cciss}}
+	                                        </td>
+	                                        <td>		
+	                                        	<button type="button" class="btn btn-primary btn-xs" ng-click="evoluzioni()">
+				                                        <span class="glyphicon glyphicon-search"></span> <span>Evoluzioni</span>
+				                            	</button>
+				                            </td>
+				                        </tr>     
+	                                    <tr>
+	                                        <td><b>Data evento: </b>{{riga.dataora_apertura}}</td>
+				                        </tr>
+			                        </table>     
+								</div>
+							</div>
+
+
+							
+                            <table width="100%" cg-busy="{promise:promessa,message:messaggio,templateUrl:'./html/templateAttendere.html'}" class="table table-striped table-bordered table-hover dataTableVito" id="dataTables-example">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Indicatori</th>
+                                        <th ng-class="frecce('descrizione')" ng-click="cambiaOrdinamento('descrizione')">Descrizione</th>
+                                        <th ng-class="frecce('stato')" ng-click="cambiaOrdinamento('stato')">Stato</th>
+                                        <th ng-class="frecce('sigla_strada,strada, direzione, dal_km, al_Km')" ng-click="cambiaOrdinamento('sigla_strada,strada, direzione, dal_km, al_Km')">Strada</th>
+                                        <th ng-class="frecce('descrizione_causa')" ng-click="cambiaOrdinamento('descrizione_causa')">Causa</th>
+                                        <th ng-class="frecce('note_cciss')" ng-click="cambiaOrdinamento('note_cciss')">Note CCISS</th>
+                                    </tr>
+                                </thead>
+                                <tbody >
+                                    <tr class="odd gradeX" ng-repeat="riga in eventi.obj">
+                                    	<td style="text-align:center;">
+                                    		<a ng-click="dettaglio(riga)" title="dettaglio evento" style="font-size:30px;"><i class="fa fa-search" aria-hidden="true"></i></a>
+                                    		<a ng-click="modifica(riga)" title="Modifica riga" style="font-size:30px;"><i class="fa fa-edit" aria-hidden="true"></i></a>
+                                    	</td>
+                                        <td style="text-align:left;">
+                                        	<img ng-show="riga.esito_invio_cmv==1 || riga.esito_invio_cmv==2" src="./images/esitoRmt1-2.png">
+                                        	<img ng-show="riga.esito_invio_cmv==-2 || riga.esito_invio_cmv==-4 || riga.esito_invio_cmv==-5 || riga.esito_invio_cmv==-6" src="./images/esitoRmtNegativo.png">
+                                        	<img ng-show="riga.esito_invio_cmv==3 || riga.esito_invio_cmv==4" src="./images/esitoRmt3-4.png">
+                                        	<img ng-show="riga.esito_invio_cmv==-3" src="./images/esitoRmt-3.png">
+                                        	<img ng-show="iconaAsterisco(riga)" src="./images/asterisco.png">
+                                        	<img ng-show="iconaBandieraVerde(riga)" src="./images/bandieraVerde.png">
+                                        	<img ng-show="iconaBandieraRossa(riga)" src="./images/bandieraRossa.png">
+                                        	<img ng-show="iconaBandieraRossaLamp(riga)" src="./images/bandieraRossaAnimata.gif">
+                                        	<img ng-show="iconaEsclamazioneGialla(riga)" src="./images/EsclamazioneGialla.png">
+                                        	<img ng-show="iconaEsclamazioneRossa(riga)" src="./images/EsclamazioneRossa.png">
+                                        	<img ng-show="iconaEsclamazioneGiallaLamp(riga)" src="./images/EsclamazioneGiallaAnimata.gif">
+                                        	<img ng-show="riga.evento=='evento'" src="./images/evento.png">
+                                        	<img ng-show="riga.evento=='ordinanza'" src="./images/ordinanza.png">
+                                        </td>
+                                        <td style="text-align:left;">{{riga.descrizione}}</td>
+                                        <td style="text-align:left;">{{riga.stato}}</td>
+                                        <td style="text-align:left;">{{riga.sigla_strada}}/{{riga.strada}}/{{riga.direzione}}/{{riga.dal_km}}/{{riga.al_Km}}</td>
+                                        <td style="text-align:left;">{{riga.descrizione_causa}}</td>
+                                        <td style="text-align:left;">{{riga.note_cciss}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+							
+
+
+
+							
+							
+							<div class="col-sm-4" style="height:50px;">
+								<div class="dataTables_info" id="dataTables-example_info" role="status" aria-live="polite">
+								Stai vedendo le righe da {{30*eventi.paginaCorrente+1}} a {{30*eventi.paginaCorrente+eventi.obj.length}} di {{eventi.totaleRecord}}.
+								</div>
+							</div>
+							<div class="col-sm-8">
+								<div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate" style="text-align:right;">
+								<ul class="pagination" style="margin:0;height:50px;">
+									<li class="paginate_button previous" ng-class="disableFirst()">
+										<a ui-sref="traffico" ng-click="vaiA(pagina-1)"><</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(0)" >
+										<a  ui-sref="traffico" ng-click="vaiA(0)">1</a>
+									</li>
+									<li class="paginate_button" ng-show="puntiniIniziali(pagina,traffico.totalePagine)">
+										<a  ui-sref="traffico">...</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[0])" ng-show="almenoPagine(2,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[0])">{{navigatore[0]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[1])" ng-show="almenoPagine(3,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[1])">{{navigatore[1]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[2])" ng-show="almenoPagine(4,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[2])">{{navigatore[2]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[3])" ng-show="almenoPagine(5,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[3])">{{navigatore[3]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[4])" ng-show="almenoPagine(6,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[4])">{{navigatore[4]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[5])" ng-show="almenoPagine(7,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[5])">{{navigatore[5]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[6])" ng-show="almenoPagine(8,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[6])">{{navigatore[6]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[7])" ng-show="almenoPagine(9,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[7])">{{navigatore[7]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[8])" ng-show="almenoPagine(10,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(navigatore[8])">{{navigatore[8]+1}}</a>
+									</li>
+									<li class="paginate_button" ng-show="puntiniFinali(pagina,traffico.totalePagine)">
+										<a  ui-sref="traffico">...</a>
+									</li>
+									<li class="paginate_button next" ng-class="isPaginaAttiva(traffico.totalePagine-1)" ng-show="almenoPagine(11,traffico.totalePagine)">
+										<a  ui-sref="traffico" ng-click="vaiA(traffico.totalePagine-1)">{{traffico.totalePagine}}</a>
+									</li>
+									<li class="paginate_button next" ng-class="disableLast()" >
+										<a  ui-sref="traffico" ng-click="vaiA(pagina+1)"">></a>
+									</li>
+								</ul>
+								</div>
+							</div>
+
+                        </div>
+
+
+
+                        
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+
+
+
+        </div>
+        <!-- /#page-wrapper -->
+
+

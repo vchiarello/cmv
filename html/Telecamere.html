@@ -1,0 +1,201 @@
+
+<div id="page-wrapper">
+	<div class="row">
+		<div class="col-sm-12" style="position: relative;">
+			<h1 class="page-header">Telecamere</h1>
+		</div>
+	</div>            
+     <!-- /.row -->
+
+	<div class="row">
+		<div class="panel panel-default">
+			<div class="panel-heading" ng-show="filtro" >
+
+				<a ui-sref="telecamere" ng-click="mostraFiltro(false)">Nascondi filtro</a>
+				
+				<div style="display: inline;padding-left:40px;">
+					<label style="vertical-align: middle;display: inline-block;" for="visibilita">Visibilità:</label> 
+					<select id="visibilita" name="visibilita" ng-model="visibilita">
+						<option value="">Tutte</option>
+						<option value="1">Visibili</option>
+						<option value="0">Non visibili</option>
+					</select>
+				</div>
+				<div style="display: inline;padding-left:40px;">
+					<label style="vertical-align: middle;display: inline-block;" for="regione">Regione:</label> 
+					<select style="vertical-align: middle;display: inline-block;" id="regione" name="regione" ng-model="regioneSelezionata" multiple="multiple" size="4">
+						<option ng-repeat="option in regioni" value="{{option.id_regione}}">{{option.regione}}</option>
+					</select>
+					</div>
+					<div style="display: inline;padding-left:40px;">
+					
+					<label style="vertical-align: middle;display: inline-block;" for="strada">Strada:</label> 
+					<input id="strada" name="strada" type="text" value="" ng-model="nomeStrada"/>
+				</div>
+				<div style="display: inline;padding-left:40px;">
+					<label style="vertical-align: middle;display: inline-block;" for="visibilita">Disponibilità:</label> 
+					<select id="disponibilita" name="disponibilita" ng-model="disponibilita">
+						<option value="">Tutte</option>
+						<option value="1">Disponibili</option>
+						<option value="0">Non disponibili</option>
+					</select>
+				</div>
+				<div style="display: inline;padding-left:40px;">
+					<button type="button" class="btn btn-primary btn-xs" ng-click="applicaFiltro()">
+						<span class="glyphicon glyphicon-search"></span> <span>Cerca</span>
+					</button>
+				</div>
+							
+			</div>
+
+			<div class="panel-heading" ng-show="!filtro">
+				<a ui-sref="telecamere" ng-click="mostraFiltro(true)">Mostra filtro</a>
+			</div>
+			<!-- /.panel-heading -->
+
+			<div class="panel-body">
+				<div class="col-sm-4" style="height:50px;">
+					Stai vedendo le righe da {{30*telecamere.paginaCorrente+1}} a {{30*telecamere.paginaCorrente+telecamere.obj.length}} di {{telecamere.totaleRecord}}.
+				</div>
+						
+				<div class="col-sm-8" style="text-align: right;">
+					<ul class="pagination" style="margin:0;height:50px;">
+					
+						<li class="paginate_button previous" ng-class="disableFirst()">
+							<a ui-sref="telecamere" ng-click="vaiA(pagina-1)"><</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(0)" >
+							<a  ui-sref="telecamere" ng-click="vaiA(0)">1</a>
+						</li>
+						<li class="paginate_button" ng-show="puntiniIniziali(pagina,telecamere.totalePagine)">
+							<a  ui-sref="telecamere">...</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[0])" ng-show="almenoPagine(2,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[0])">{{navigatore[0]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[1])" ng-show="almenoPagine(3,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[1])">{{navigatore[1]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[2])" ng-show="almenoPagine(4,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[2])">{{navigatore[2]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[3])" ng-show="almenoPagine(5,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[3])">{{navigatore[3]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[4])" ng-show="almenoPagine(6,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[4])">{{navigatore[4]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[5])" ng-show="almenoPagine(7,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[5])">{{navigatore[5]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[6])" ng-show="almenoPagine(8,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[6])">{{navigatore[6]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[7])" ng-show="almenoPagine(9,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[7])">{{navigatore[7]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[8])" ng-show="almenoPagine(10,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[8])">{{navigatore[8]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-show="puntiniFinali(pagina,telecamere.totalePagine)">
+							<a  ui-sref="telecamere">...</a>
+						</li>
+						<li class="paginate_button next" ng-class="isPaginaAttiva(telecamere.totalePagine-1)" ng-show="almenoPagine(11,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(telecamere.totalePagine-1)">{{telecamere.totalePagine}}</a>
+						</li>
+						<li class="paginate_button next" ng-class="disableLast()" >
+							<a  ui-sref="telecamere" ng-click="vaiA(pagina+1)"">></a>
+						</li>
+					</ul>
+				</div>
+
+                <table width="100%" cg-busy="{promise:promessa,message:messaggio,templateUrl:'./html/templateAttendere.html'}" class="table table-striped table-bordered table-hover dataTableVito" id="dataTables-example">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th ng-class="frecce(10)" id="th10" >Immagine</th>
+                            <th ng-class="frecce('id_cam')" id="th1" ng-click="cambiaOrdinamento('id_cam')">Id Cam</th>
+                            <th ng-class="frecce('direzione')" id="th6" ng-click="cambiaOrdinamento('direzione')">Direzione</th>
+                            <th ng-class="frecce('strada')" id="th3" ng-click="cambiaOrdinamento('strada')">Strada</th>
+                            <th ng-class="frecce('descrizione')" id="th7" ng-click="cambiaOrdinamento('descrizione')">Descrizione</th>
+                            <th ng-class="frecce('data_sovr')" id="th9" ng-click="cambiaOrdinamento('data_sovr')">Data</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr class="odd gradeX" ng-repeat="riga in telecamere.obj">
+                        	<td style="text-align:center;">
+                        		<a ng-click="mostraDettaglio(riga.id)" title="dettaglio riga" style="font-size:30px;"><i class="fa fa-search" aria-hidden="true"></i></a>
+                        		<a ng-click="mostra(riga.id_cam)"  title="Nascosto, pubblicare?" style="font-size:30px;" ng-show="riga.visibilita==0"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+                        		<a ng-click="nascondi(riga.id_cam)" title="Visibile, da nascondere?" style="font-size:30px;" ng-show="riga.visibilita==1"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
+                        	</td>
+                            <td style="text-align:center;"><img style="height:50px" ng-src="rest/web/DownloadImageTelecamereWs.php?id={{riga.id}}" /></td>
+                            <td style="text-align:left;">{{riga.id_cam}}</td>
+                            <td style="text-align:left;">{{riga.direzione}}</td>
+                            <td style="text-align:left;">{{riga.strada}}</td>
+                            <td style="text-align:left;">{{riga.descrizione}}</td>
+                            <td style="text-align:left;">{{riga.data_sovr_s}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+				<div class="col-sm-4">
+					Stai vedendo le righe da {{30*telecamere.paginaCorrente+1}} a {{30*telecamere.paginaCorrente+telecamere.obj.length}} di {{telecamere.totaleRecord}}.
+					
+				</div>
+						
+				<div class="col-sm-8" style="text-align:right;">
+					<ul class="pagination" style="margin:0;height:50px;">
+					
+						<li class="paginate_button previous" ng-class="disableFirst()">
+							<a ui-sref="telecamere" ng-click="vaiA(pagina-1)"><</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(0)" >
+							<a  ui-sref="telecamere" ng-click="vaiA(0)">1</a>
+						</li>
+						<li class="paginate_button" ng-show="puntiniIniziali(pagina,telecamere.totalePagine)">
+							<a  ui-sref="telecamere">...</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[0])" ng-show="almenoPagine(2,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[0])">{{navigatore[0]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[1])" ng-show="almenoPagine(3,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[1])">{{navigatore[1]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[2])" ng-show="almenoPagine(4,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[2])">{{navigatore[2]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[3])" ng-show="almenoPagine(5,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[3])">{{navigatore[3]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[4])" ng-show="almenoPagine(6,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[4])">{{navigatore[4]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[5])" ng-show="almenoPagine(7,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[5])">{{navigatore[5]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[6])" ng-show="almenoPagine(8,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[6])">{{navigatore[6]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[7])" ng-show="almenoPagine(9,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[7])">{{navigatore[7]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-class="isPaginaAttiva(navigatore[8])" ng-show="almenoPagine(10,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(navigatore[8])">{{navigatore[8]+1}}</a>
+						</li>
+						<li class="paginate_button" ng-show="puntiniFinali(pagina,telecamere.totalePagine)">
+							<a  ui-sref="telecamere">...</a>
+						</li>
+						<li class="paginate_button next" ng-class="isPaginaAttiva(telecamere.totalePagine-1)" ng-show="almenoPagine(11,telecamere.totalePagine)">
+							<a  ui-sref="telecamere" ng-click="vaiA(telecamere.totalePagine-1)">{{telecamere.totalePagine}}</a>
+						</li>
+						<li class="paginate_button next" ng-class="disableLast()" >
+							<a  ui-sref="telecamere" ng-click="vaiA(pagina+1)"">></a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /#page-wrapper -->
+

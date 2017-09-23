@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:tns="http://test-uri/soap/export/"
+    xmlns:s="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+    targetNamespace="http://test-uri/soap/export/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+
+<wsdl:types>
+<s:schema targetNamespace="http://test-uri/soap/export/" elementFormDefault="qualified">
+
+    <s:element name="semaforoRequest">
+        <s:complexType>
+            <s:sequence>
+                <s:element minOccurs="1" maxOccurs="1" name="semaforo" type="s:int"/>
+            </s:sequence>
+        </s:complexType>
+    </s:element>
+
+    <s:element name="semaforoResponse">
+        <s:complexType>
+            <s:sequence>
+                <s:element name="semaforo" type="tns:messaggioT" minOccurs="1" maxOccurs="1"/>
+            </s:sequence>
+        </s:complexType>
+    </s:element>
+
+    <s:complexType name="messaggioT">
+        <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="valore" type="s:int"/>
+            <s:element minOccurs="1" maxOccurs="1" name="messaggioEsito" type="s:string"/>
+        </s:sequence>
+    </s:complexType>
+</s:schema>
+</wsdl:types>
+
+<wsdl:message name="SemaforoSoapIn">
+<wsdl:part name="parameters" element="tns:semaforoRequest"/>
+</wsdl:message>
+<wsdl:message name="SemaforoSoapOut">
+<wsdl:part name="parameters" element="tns:semaforoResponse"/>
+</wsdl:message>
+
+<wsdl:portType name="SemaforoEventoSoap">
+<wsdl:operation name="putSemaforo">
+    <wsdl:documentation xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'>
+        Function ("putSemaforo")
+    </wsdl:documentation>
+    <wsdl:input message="tns:SemaforoSoapIn"/>
+    <wsdl:output message="tns:SemaforoSoapOut"/>
+</wsdl:operation>
+</wsdl:portType>
+
+<wsdl:portType name="SemaforoEventoSoap12">
+<wsdl:operation name="putSemaforo">
+    <wsdl:documentation xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'>
+        Function ("putSemaforo")
+    </wsdl:documentation>
+    <wsdl:input message="tns:SemaforoSoapIn"/>
+    <wsdl:output message="tns:SemaforoSoapOut"/>
+</wsdl:operation>
+</wsdl:portType>
+
+<wsdl:binding name="SemaforoEventoSoap" type="tns:SemaforoEventoSoap">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="putSemaforo">
+    <soap:operation soapAction="http://localhost/cmvLuigi/soap/export/putSemaforo" style="document"/>
+    <wsdl:input>
+        <soap:body use="literal"/>
+    </wsdl:input>
+    <wsdl:output>
+        <soap:body use="literal"/>
+    </wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+
+<wsdl:binding name="SemaforoEventoSoap12" type="tns:SemaforoEventoSoap12">
+<soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="putSemaforo">
+    <soap12:operation soapAction="http://localhost/cmvLuigi/soap/export/putSemaforo" style="document"/>
+    <wsdl:input>
+        <soap12:body use="literal"/>
+    </wsdl:input>
+    <wsdl:output>
+        <soap12:body use="literal"/>
+    </wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+
+<wsdl:service name="EventoService">
+<wsdl:port name="SemaforoEventoSoap" binding="tns:SemaforoEventoSoap">
+    <soap:address location="http://localhost/cmvLuigi/soap/semaforoEvento.php"/>
+</wsdl:port>
+<wsdl:port name="SemaforoEventoSoap12" binding="tns:SemaforoEventoSoap12">
+    <soap12:address location="http://localhost/cmvLuigi/soap/semaforoEvento.php"/>
+</wsdl:port>
+</wsdl:service>
+
+</wsdl:definitions>
