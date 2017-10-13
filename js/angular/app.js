@@ -1,1 +1,1 @@
-var app = angular.module("cmv", ["ui.router", "cgBusy"]);
+var app = angular.module("cmv", ["ui.router", "cgBusy","ngAnimate"]);

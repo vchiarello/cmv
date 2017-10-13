@@ -47,9 +47,13 @@ angular.module("cmv").config(function ($stateProvider, $urlRouterProvider) {
 	        url:'/meteoSettimanale',
 	        templateUrl: './html/MeteoSettimanale.html',
 	        controller: 'MeteoSettimanaleController'
-	    }).state('settingDownloadTelecamere', {
-	        url:'/settingDownloadTelecamere',
-	        templateUrl: './html/settingDownloadTelecamere.html',
-	        controller: 'settingDownloadTelecamere'
+	    }).state('listaCanali', {
+	        url:'/listaCanali',
+	        templateUrl: './html/listaCanali.html',
+	        controller: 'listaCanali'
+	    }).state('manageCanale', {
+	        url:'/manageCanale/:azione/:id',
+	        templateUrl: './html/ManageCanale.html',
+	        controller: 'manageCanale'
         });
 });

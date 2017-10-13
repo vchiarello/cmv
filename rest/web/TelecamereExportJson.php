@@ -10,7 +10,7 @@ use rest\database\ConnectionStatic;
 //error_log("Sessione: ".session_id() . " - Utente: " . $_SESSION["userid"] );
 
 
-function listaTelecamereExport(){
+function listaTelecamereExport($token){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -22,7 +22,7 @@ function listaTelecamereExport(){
 	}
 	
 	
-	$select = "select id_cam ,nome,codice_strada,latitudine,longitudine,km,owner,descrizione,direzione,disponibilita,regione,data_sovrimpressione,immagine from telecamere_export_v ";
+	$select = "select id_cam ,nome,codice_strada,latitudine,longitudine,km,owner,descrizione,direzione,disponibilita,regione,data_sovrimpressione,immagine from telecamere_export_v where token='".$token."'";
 		
 	error_log("Query estrazione dati. ".$select);
 	$stmt = $conn->pdo->prepare($select, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
@@ -40,8 +40,12 @@ function listaTelecamereExport(){
 	return $out;
 }
 
-
-$out=listaTelecamereExport();
-echo json_encode($out);
-
+error_log("arrivato in Telecamere Export Json");
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+	if (isset($_GET['token']) ) {
+		
+		$out=listaTelecamereExport($_GET['token']);
+		echo json_encode($out);
+	}
+}
 ?>

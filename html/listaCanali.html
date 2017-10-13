@@ -1,0 +1,64 @@
+
+<!-- Page Content -->
+<div id="page-wrapper">
+	<div class="row">
+	    <div class="col-sm-12" style="position: relative;">
+	    	<h1 class="page-header">Canali</h1>
+		</div>
+	</div>	
+	<div class="row">
+		<div class="panel panel-default">
+		    <div class="panel-heading" ng-show="filtro" style="margin:auto;">
+		    
+				<div style="margin:auto;padding-left:10px;width:80%;text-align: center;">
+					<input id="daCercare" name="daCercare" type="text" value="" ng-model="daCercare"/>
+					<button type="button" class="btn btn-primary btn-xs" ng-click="applicaFiltro()">
+						<span class="glyphicon glyphicon-search"></span> <span>Cerca</span>
+                    </button>
+
+					<a style="padding-left:100px;" ui-sref="listaCanali" ng-click="mostraFiltro(false)">Nascondi filtro</a>
+                </div>
+				
+			</div>
+			
+			<div class="panel-heading" ng-show="!filtro" >
+				<a ui-sref="listaCanali" ng-click="mostraFiltro(true)">Mostra filtro</a>
+			</div>
+				
+            <div class="panel-body">
+            	<table style="width:100%" cg-busy="{promise:promessa,message:messaggio,templateUrl:'./html/templateAttendere.html'}" class="table table-striped table-bordered table-hover dataTableVito">
+              		<thead>
+	                   	<tr>
+							<th style="width:15%;text-align:center;">
+								<a ui-sref="manageCanale({azione: 'New'})" title="Nuovo canale" style="font-size:30px;">
+		                     		<i class="fa fa-plus" aria-hidden="true"></i>
+								</a>
+	                        </th>
+							<th style="width:35%;text-align:left;" ng-class="frecce('descrizione_canale')" id="th10" ng-click="cambiaOrdinamento('descrizione_canale')" >Descrizione</th>
+							<th style="width:25%;text-align:left;" ng-class="frecce('token')" id="th1" ng-click="cambiaOrdinamento('token')">Token</th>
+							<th style="width:25%;text-align:left;" ng-class="frecce('indirizzo')" id="th6" ng-click="cambiaOrdinamento('indirizzo')">Indirizzo</th>
+	                 	</tr>
+                	</thead>
+                	<tbody>
+                    	<tr class="odd gradeX" ng-repeat="riga in canali">
+							<td style="text-align:center;">
+							<a style="padding:5px;font-size:30px;" ui-sref="settingCanali" ng-click="delete(riga.id_canale)" title="Cancella canale" >
+								<i class="fa fa-times" aria-hidden="true"></i></a>
+							<a style="padding:5px;font-size:30px;" ui-sref="manageCanale({azione: 'View', id: riga.id_canale})" title="Dettaglio canale">
+								<i class="fa fa-search" aria-hidden="true"></i></a>
+							<a style="padding:5px;font-size:30px;" ui-sref="manageCanale({azione: 'Edit', id: riga.id_canale})" title="Edit canale">
+									<i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>	
+							</td>
+							<td style="text-align:left;">{{riga.descrizione_canale}}</td>
+							<td style="text-align:left;">{{riga.token}}</td>
+							<td style="text-align:left;">{{riga.indirizzo}}</td>
+                    	</tr>
+                    </tbody>
+                </table>
+			</div>
+		</div>	
+	</div>
+	<!-- /.row -->
+</div>
+<!-- /#page-wrapper -->
+

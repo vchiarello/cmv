@@ -88,6 +88,7 @@ error_log("Sessione ok: " . $utente . ' - ' . session_id());
     <script src="./webjars/bootbox/4.4.0/bootbox.js"></script>
 	<!-- angular core -->
     <script src="./webjars/angularjs/1.5.8/angular.js"></script>
+    <script src="./webjars/angular-animate/1.5.8/angular-animate.js"></script>
 	<!-- angular per la gestione dell'ui-view con navigatore solo nell'index -->
     <script src="./webjars/angular-ui-router/0.2.8/angular-ui-router.js"></script>
 	<!-- angular busy per spinner -->
@@ -109,8 +110,10 @@ error_log("Sessione ok: " . $utente . ' - ' . session_id());
 	<script src="./js/angular/controller/MeteoGiornaliero.js" ></script>
 	<!-- controller del meteo settimanale-->
 	<script src="./js/angular/controller/MeteoSettimanale.js" ></script>
-	<!-- controller dello scaricatore delle telecamere -->
-	<script src="./js/angular/controller/settingDownloadTelecamere.js" ></script>
+	<!-- controller dell'anagrafica dei canali -->
+	<script src="./js/angular/controller/listaCanali.js" ></script>
+	<!-- controller dell'anagrafica dei canali -->
+	<script src="./js/angular/controller/ManageCanale.js" ></script>
 	<!-- controller Blank -->
 	<script src="./js/angular/controller/BlankController.js" ></script>
 	<!-- controller DettaglioEventoController -->
@@ -145,14 +148,14 @@ error_log("Sessione ok: " . $utente . ' - ' . session_id());
                     </a>
                     <ul class="dropdown-menu dropdown-messages">
                         <li>
-                            <a ui-sref="settingDownloadTelecamere">
+                            <a ui-sref="listaCanali">
                                 <div>
                                     <strong>Telecamere</strong>
                                     <span class="pull-right text-muted">
                                         <em></em>
                                     </span>
                                 </div>
-                                <div>Gestione scarico dati delle telecamere...</div>
+                                <div>Gestione canali</div>
                             </a>
                         </li>
                         <li class="divider"></li>
