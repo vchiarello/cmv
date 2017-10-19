@@ -7,31 +7,31 @@
 		            	<div class="col-lg-6">
                        
                        	<table width="100%" cg-busy="{promise:promessa,message:messaggio,templateUrl:'./html/templateAttendere.html'}" class="table table-striped table-bordered table-hover dataTableVito">
-                               <tr class="odd gradeX">
-                                     <td colspan="2" style="text-align:center;">{{risultato.messaggio}}</td>
+                            <tr class="odd gradeX">
+								<td colspan="2" style="text-align:center;">{{risultato.messaggio}}</td>
                            	</tr>
-                               <tr class="odd gradeX">
-                                     <td style="text-align:right;">Descrizione:</td>
+                            <tr class="odd gradeX">
+                                     <td style="text-align:right;width:20%;">Descrizione:</td>
                                      <td style="text-align:left;">
                                      	<input ng-show="canale.azione!='View'" type="text" value="" id="descrizione" ng-model="canale.descrizione_canale">
                                      	<span ng-show="canale.azione=='View'">{{canale.descrizione_canale}}</span>
                                      </td>
                            	</tr>
-                               <tr class="odd gradeX">
-                                     <td style="text-align:right;">Token:</td>
+                            <tr class="odd gradeX">
+                                     <td style="text-align:right;width:20%;">Token:</td>
                                      <td style="text-align:left;">
                                      	<input ng-show="canale.azione!='View'" type="text" value="" id="token" ng-model="canale.token">
                                      	<span ng-show="canale.azione=='View'">{{canale.token}}</span>
                                      </td>	
                            	</tr>
-                               <tr class="odd gradeX">
-                                     <td style="text-align:right;">Indirizzo:</td>
-                                     <td style="text-align:left;">
-                                     	<input ng-show="canale.azione!='View'" type="text" value="" id="indirizzo" ng-model="canale.indirizzo">
-                                     	<span ng-show="canale.azione=='View'">{{canale.indirizzo}}</span>
-                                     </td>	
-                               </tr>
-                               <tr>
+                            <tr class="odd gradeX">
+                                  <td style="text-align:right;width:20%;">Indirizzo:</td>
+                                  <td style="text-align:left;">
+                                  	<input ng-show="canale.azione!='View'" type="text" value="" id="indirizzo" ng-model="canale.indirizzo">
+                                  	<span ng-show="canale.azione=='View'">{{canale.indirizzo}}</span>
+                                  </td>	
+                            </tr>
+                            <tr>
                                <td colspan="2" style="text-align:center;">
                                
                                

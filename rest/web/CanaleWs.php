@@ -108,7 +108,7 @@ function listaCompartimentiStradeVuoti(){
 		return;
 	}
 	
-		$query = "select distinct compartimento, cod_strada from cmv.traffico_compartimenti_strade_v by compartimento,cod_strada; ";
+		$query = "select distinct compartimento, cod_strada from cmv.traffico_compartimenti_strade_v order by compartimento,cod_strada; ";
 		
 		$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 		
@@ -130,7 +130,7 @@ function listaCompartimentiStradeVuoti(){
 					$appo = CanaleCompartimentoPage::nodo($row->compartimento);
 					$out[]=$appo;
 				}
-				$appo->aggiungiStrada($row->cod_strada, true);
+				$appo->aggiungiStrada($row->cod_strada, false);
 			}
 			$radice = CanaleCompartimentoPage::nodo("tutto");
 			$radice->aperto=true;
@@ -269,7 +269,7 @@ function aggiungiCanale($canale){
 		error_log($conn->pdo->errorCode());
 		
 	}
-	salvaCompartimentiStrade($_POST['nodiSelezionati'],$canale->id);
+	salvaCompartimentiStrade($_POST['nodiSelezionati'],$conn->pdo->lastInsertId());
 	
 }
 
@@ -436,7 +436,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 		echo json_encode($out);
 	}elseif (isset($_GET['azione']) && $_GET['azione']=='New' ) {
 		error_log("GET CanaleWs, New canale...");
-		$out=listaCompartimentiStrade("nuovo");
+		$out=listaCompartimentiStradeVuoti();
 		echo json_encode($out);
 	}elseif (isset($_GET['azione']) && $_GET['azione']=='Get' && isset($_GET['id'])) {
 		error_log("GET CanaleWs, get canale...");

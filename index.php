@@ -150,7 +150,7 @@ error_log("Sessione ok: " . $utente . ' - ' . session_id());
                         <li>
                             <a ui-sref="listaCanali">
                                 <div>
-                                    <strong>Telecamere</strong>
+                                    <strong>Canali</strong>
                                     <span class="pull-right text-muted">
                                         <em></em>
                                     </span>

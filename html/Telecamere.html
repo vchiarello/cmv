@@ -55,7 +55,8 @@
 
 			<div class="panel-body">
 				<div class="col-sm-4" style="height:50px;">
-					Stai vedendo le righe da {{30*telecamere.paginaCorrente+1}} a {{30*telecamere.paginaCorrente+telecamere.obj.length}} di {{telecamere.totaleRecord}}.
+					<span ng-show="telecamere.totaleRecord>0">Stai vedendo le righe da {{30*telecamere.paginaCorrente+1}} a {{30*telecamere.paginaCorrente+telecamere.obj.length}} di {{telecamere.totaleRecord}}.</span>
+					<span ng-show="telecamere.totaleRecord==0">Nessun record visualizzato.</span>
 				</div>
 						
 				<div class="col-sm-8" style="text-align: right;">
@@ -139,8 +140,8 @@
                 </table>
 
 				<div class="col-sm-4">
-					Stai vedendo le righe da {{30*telecamere.paginaCorrente+1}} a {{30*telecamere.paginaCorrente+telecamere.obj.length}} di {{telecamere.totaleRecord}}.
-					
+					<span ng-show="telecamere.totaleRecord>0">Stai vedendo le righe da {{30*telecamere.paginaCorrente+1}} a {{30*telecamere.paginaCorrente+telecamere.obj.length}} di {{telecamere.totaleRecord}}.</span>
+					<span ng-show="telecamere.totaleRecord==0">Nessun record visualizzato.</span>
 				</div>
 						
 				<div class="col-sm-8" style="text-align:right;">

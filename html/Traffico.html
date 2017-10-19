@@ -64,7 +64,8 @@
 
 				<div class="col-sm-4" style="height:50px;">
 					<div class="dataTables_info" id="dataTables-example_info" role="status" aria-live="polite">
-					Stai vedendo le righe da {{30*traffico.paginaCorrente+1}} a {{30*traffico.paginaCorrente+traffico.obj.length}} di {{traffico.totaleRecord}}.
+					<span ng-show="traffico.totaleRecord>0">Stai vedendo le righe da {{30*traffico.paginaCorrente+1}} a {{30*traffico.paginaCorrente+traffico.obj.length}} di {{traffico.totaleRecord}}.</span>
+					<span ng-show="traffico.totaleRecord==0">Nessun record visualizzato.</span>
 					</div>
 				</div>
 				<div class="col-sm-8" style="text-align: right;">
@@ -169,7 +170,8 @@
 
 				<div class="col-sm-4" style="height:50px;">
 					<div class="dataTables_info" id="dataTables-example_info" role="status" aria-live="polite">
-					Stai vedendo le righe da {{30*traffico.paginaCorrente+1}} a {{30*traffico.paginaCorrente+traffico.obj.length}} di {{traffico.totaleRecord}}.
+					<span ng-show="traffico.totaleRecord>0">Stai vedendo le righe da {{30*traffico.paginaCorrente+1}} a {{30*traffico.paginaCorrente+traffico.obj.length}} di {{traffico.totaleRecord}}.</span>
+					<span ng-show="traffico.totaleRecord==0">Nessun record visualizzato.</span>
 					</div>
 				</div>
 				<div class="col-sm-8" style="text-align: right;">

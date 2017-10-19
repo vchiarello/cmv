@@ -46,7 +46,8 @@
 			<div class="panel-body">
 				<div class="col-sm-4" style="height:50px;">
 					<div class="dataTables_info" id="dataTables-example_info" role="status" aria-live="polite">
-					Stai vedendo le righe da {{30*meteo7gg.paginaCorrente+1}} a {{30*meteo7gg.paginaCorrente+meteo7gg.obj.length}} di {{meteo7gg.totaleRecord}}.
+					<span ng-show="meteo7gg.totaleRecord>0">Stai vedendo le righe da {{30*meteo7gg.paginaCorrente+1}} a {{30*meteo7gg.paginaCorrente+meteo7gg.obj.length}} di {{meteo7gg.totaleRecord}}.</span>
+					<span ng-show="meteo7gg.totaleRecord==0">Nessun record visualizzato.</span>
 					</div>
 				</div>
 				<div class="col-sm-8" style="text-align: right;">
@@ -133,7 +134,8 @@
             
 	        	<div class="col-sm-4" style="height:50px;">
 					<div class="dataTables_info" id="dataTables-example_info" role="status" aria-live="polite">
-					Stai vedendo le righe da {{30*meteo7gg.paginaCorrente+1}} a {{30*meteo7gg.paginaCorrente+meteo7gg.obj.length}} di {{meteo7gg.totaleRecord}}.
+					<span ng-show="meteo7gg.totaleRecord>0">Stai vedendo le righe da {{30*meteo7gg.paginaCorrente+1}} a {{30*meteo7gg.paginaCorrente+meteo7gg.obj.length}} di {{meteo7gg.totaleRecord}}.</span>
+					<span ng-show="meteo7gg.totaleRecord==0">Nessun record visualizzato.</span>
 					</div>
 				</div>
 				<div class="col-sm-8" style="text-align: right;">
