@@ -1,30 +1,12 @@
 <!DOCTYPE html>
 <?php
 session_start();
-//se non c'è la sessione registrata
-if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 600)) {
-    // last request was more than 30 minutes ago
-    session_unset();     // unset $_SESSION variable for the run-time 
-    session_destroy();   // destroy session data in storage
-}
-$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
-if (!isset($_SESSION['CREATED'])) {
-    $_SESSION['CREATED'] = time();
-} else if (time() - $_SESSION['CREATED'] > 1800) {
-    // session started more than 30 minutes ago
-    session_regenerate_id(true);    // change session ID for the current session and invalidate old session ID
-    $_SESSION['CREATED'] = time();  // update creation time
-}
-if (!isset($_SESSION['userid']) or !isset($_SESSION['autorizzato'])) {
-	unset($_SESSION['msg']);
-	echo "<h1>Area riservata, accesso negato.</h1>";
-	echo "Per effettuare il login clicca <a href='login.php'><font color='blue'>qui</font></a>";
-	die;
-}
-
-//Altrimenti Prelevo il codice identificatico dell'utente loggato
-$utente = $_SESSION['userid']; //id cod recuperato nel file di verifica
-error_log("Sessione ok: " . $utente . ' - ' . session_id());
+include("./sec/Sec.php");
+use sec\Sec;
+$ut = $_SESSION['userid'];
+$sec = new Sec();
+# Primo livello. Il secondo livello viene creato a partire dalle voci del primo
+$dd = $sec->menu($ut, '');
 ?>
 <html lang="en"  ng-app="cmv">
 
@@ -114,6 +96,10 @@ error_log("Sessione ok: " . $utente . ' - ' . session_id());
 	<script src="./js/angular/controller/listaCanali.js" ></script>
 	<!-- controller dell'anagrafica dei canali -->
 	<script src="./js/angular/controller/ManageCanale.js" ></script>
+	<!-- controller dell'anagrafica dei canali -->
+	<script src="./js/angular/controller/listaUtenti.js" ></script>
+	<!-- controller dell'anagrafica dei canali -->
+	<script src="./js/angular/controller/ManageUtente.js" ></script>
 	<!-- controller Blank -->
 	<script src="./js/angular/controller/BlankController.js" ></script>
 	<!-- controller DettaglioEventoController -->
@@ -159,149 +145,22 @@ error_log("Sessione ok: " . $utente . ' - ' . session_id());
                             </a>
                         </li>
                         <li class="divider"></li>
+                        <li>
+                            <a ui-sref="listaUtenti">
+                                <div>
+                                    <strong>Utenti</strong>
+                                    <span class="pull-right text-muted">
+                                        <em></em>
+                                    </span>
+                                </div>
+                                <div>Gestione utenti</div>
+                            </a>
+                        </li>
                     </ul>
                     <!-- /.dropdown-messages -->
                 </li>
                 <!-- /.dropdown -->
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-tasks">
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <p>
-                                        <strong>Task 1</strong>
-                                        <span class="pull-right text-muted">40% Complete</span>
-                                    </p>
-                                    <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                                            <span class="sr-only">40% Complete (success)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <p>
-                                        <strong>Task 2</strong>
-                                        <span class="pull-right text-muted">20% Complete</span>
-                                    </p>
-                                    <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
-                                            <span class="sr-only">20% Complete</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <p>
-                                        <strong>Task 3</strong>
-                                        <span class="pull-right text-muted">60% Complete</span>
-                                    </p>
-                                    <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-                                            <span class="sr-only">60% Complete (warning)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <p>
-                                        <strong>Task 4</strong>
-                                        <span class="pull-right text-muted">80% Complete</span>
-                                    </p>
-                                    <div class="progress progress-striped active">
-                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                            <span class="sr-only">80% Complete (danger)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a class="text-center" href="#">
-                                <strong>See All Tasks</strong>
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-tasks -->
-                </li>
-                <!-- /.dropdown -->
-                <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-alerts">
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-comment fa-fw"></i> New Comment
-                                    <span class="pull-right text-muted small">4 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-twitter fa-fw"></i> 3 New Followers
-                                    <span class="pull-right text-muted small">12 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-envelope fa-fw"></i> Message Sent
-                                    <span class="pull-right text-muted small">4 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-tasks fa-fw"></i> New Task
-                                    <span class="pull-right text-muted small">4 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="#">
-                                <div>
-                                    <i class="fa fa-upload fa-fw"></i> Server Rebooted
-                                    <span class="pull-right text-muted small">4 minutes ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a class="text-center" href="#">
-                                <strong>See All Alerts</strong>
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                    <!-- /.dropdown-alerts -->
-                </li>
-                <!-- /.dropdown -->
+
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
@@ -324,27 +183,26 @@ error_log("Sessione ok: " . $utente . ' - ' . session_id());
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
-                        <li>
-                            <a ui-sref="telecamere"><i class="fa fa-table fa-fw"></i>Telecamere</a>
-                        </li>
-                        <li>
-                            <a ui-sref="eventi"><i class="fa fa-table fa-fw"></i> Eventi/segnalazioni/ordinanze</a>
-                        </li>
-                        <li>
-                            <a ui-sref="traffico"><i class="fa fa-table fa-fw"></i>Traffico</a>
-                        </li>
-                        <li>
-                            <a href="#"><i class="fa fa-table fa-fw"></i>Meteo<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a ui-sref="meteoGiornaliero">Giornaliero</a>
-                                </li>
-                                <li>
-                                    <a ui-sref="meteoSettimanale">Settimanale</a>
-                                </li>
-                            </ul>
-                            <!-- /.nav-second-level -->
-                        </li>
+                        <?php foreach ($dd as $k => $v) { ?>
+                            <li>
+                            <?php 
+                                $dd2 = $sec->menu($ut, $k);
+                                if (sizeof($dd2) < 1) { 
+							?>
+                                <a ui-sref="<?php echo $v['tag']; ?>"><i class="fa fa-table fa-fw"></i><?php echo $v['dd']; ?></a>
+                            <?php } else { ?>
+                                <a href="#"><i class="fa fa-table fa-fw"></i><?php echo $v['dd']; ?><span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                <?php foreach ($dd2 as $k2 => $v2) { ?>
+                                    <li>
+                                        <a ui-sref="<?php echo $v2['tag']; ?>"><?php echo $v2['dd']; ?></a>
+                                    </li>
+                                <?php } ?>
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            <?php } ?>
+                            </li>
+                        <?php } ?>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->

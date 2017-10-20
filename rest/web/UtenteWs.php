@@ -24,23 +24,23 @@ if (!isset($_SESSION['userid']) or !isset($_SESSION['autorizzato'])) {
 
 
 include("../database/ConnectionStatic.php");
-include("./MngCanaleWs.php");
-include("../bean/Canale.php");
+include("./MngUtenteWs.php");
+include("../bean/Utente.php");
 include("../bean/RisultatoPost.php");
-include("../bean/CanaleCompartimentoPage.php");
+include("../bean/FunzioneCompartimentoPage.php");
 
 use rest\database\ConnectionStatic;
-use rest\web\MngCanaleWs;
-use rest\bean\Canale;
+use rest\web\MngUtenteWs;
 use rest\bean\RisultatoPost;
-use rest\bean\CanaleCompartimentoPage;
+use rest\bean\FunzioneCompartimentoPage;
+use rest\bean\Utente;
 
 
 
 //error_log("Sessione: ".session_id() . " - Utente: " . $_SESSION["userid"] );
 
 
-function listaCompartimentiStrade($id){
+function listaFunzioniCompartimenti($id){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -50,18 +50,22 @@ function listaCompartimentiStrade($id){
 		echo json_encode("");
 		return;
 	}
-	
-	//questa query serve per estrarre l'albero delle iscrizioni di un canale la prima parte della query serve ad estrarre
+
+	//questa query serve per estrarre l'albero delle iscrizioni di un utente la prima parte della query serve ad estrarre
 	//tutti i compartimenti non selezionati (è una join per fare la minus) la seconda per estrarre i nodi selezionati
-	$query = "select ccsv.cod_strada, ccsv.compartimento, null id_canale from ".
-				"cmv.canali_compartimenti_strade_view ccsv ".
-				"left join cmv.filtro_canale fc on ccsv.compartimento = fc.compartimento and ccsv.cod_strada=fc.cod_strada and fc.id_canale=:id ".
-				"where fc.compartimento is null ".
-				"and fc.cod_strada is null ".
-				"union ".
-				"select f.cod_strada, f.compartimento, id_canale from cmv.filtro_canale f ".
-				"where f.id_Canale=:id1 order by compartimento, cod_strada";
-		
+	$query =
+	"select fcv.id_funzione, fcv.compartimento, dd_funzione, null idlogin ".
+	"from cmv.funzione_compartimento_v fcv ".
+	"left join cmv.utenti_funzioni uf on fcv.compartimento = uf.compartimento and fcv.id_funzione=uf.id_funzione and uf.idlogin=:id ".
+	"where uf.compartimento is null ".
+	"and uf.id_funzione is null ".
+	"union ".
+	"select uf.id_funzione, uf.compartimento, dd_funzione, idlogin ".
+	"from cmv.utenti_funzioni uf,  cmv.funzione_compartimento_v fcv ".
+	"where fcv.compartimento = uf.compartimento ".
+	"and fcv.id_funzione=uf.id_funzione ".
+	"and uf.idlogin=:id1  order by id_funzione, compartimento ";
+	
 		
 		$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 		
@@ -77,20 +81,20 @@ function listaCompartimentiStrade($id){
 			
 			$stmt -> execute();
 			$out = array();
-			$comporPrecendente = null;
+			$funzionePrecendente = null;
 			$appo = null;
 			while ($row = $stmt->fetch(\PDO::FETCH_OBJ)) {
-				if ($row->compartimento != $comporPrecendente){
-					$comporPrecendente = $row->compartimento;
-					$appo = CanaleCompartimentoPage::nodo($row->compartimento);
+				if ($row->id_funzione!= $funzionePrecendente){
+					$funzionePrecendente= $row->id_funzione;
+					$appo = FunzioneCompartimentoPage::nodo($row->id_funzione,$row->dd_funzione);
 					$out[]=$appo;
 				}
-				if ($row->id_canale == null)
-					$appo->aggiungiStrada($row->cod_strada, false);
+				if ($row->idlogin == null)
+					$appo->aggiungiCompartimento($row->compartimento, false);
 				else
-					$appo->aggiungiStrada($row->cod_strada, true);
+					$appo->aggiungiCompartimento($row->compartimento, true);
 			}
-			$radice = CanaleCompartimentoPage::nodo("tutto");
+			$radice = FunzioneCompartimentoPage::nodo("tutto","tutto");
 			$radice->aperto=true;
 			$radice->figli=$out;
 			$risultato = array();
@@ -99,7 +103,7 @@ function listaCompartimentiStrade($id){
 			return $risultato;
 }
 
-function listaCompartimentiStradeVuoti(){
+function listaFunzioniCompartimentiVuoti(){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -110,7 +114,7 @@ function listaCompartimentiStradeVuoti(){
 		return;
 	}
 	
-		$query = "select distinct compartimento, cod_strada from cmv.traffico_compartimenti_strade_v order by compartimento,cod_strada; ";
+		$query = "select distinct id_funzione, dd_funzione, Compartimento from cmv.funzione_compartimento_v order by dd_funzione,Compartimento; ";
 		
 		$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 		
@@ -124,17 +128,20 @@ function listaCompartimentiStradeVuoti(){
 			
 			$stmt -> execute();
 			$out = array();
-			$comporPrecendente = null;
+
+			$funzionePrecendente = null;
 			$appo = null;
 			while ($row = $stmt->fetch(\PDO::FETCH_OBJ)) {
-				if ($row->compartimento != $comporPrecendente){
-					$comporPrecendente = $row->compartimento;
-					$appo = CanaleCompartimentoPage::nodo($row->compartimento);
+				if ($row->id_funzione!= $funzionePrecendente){
+					$funzionePrecendente= $row->id_funzione;
+					$appo = FunzioneCompartimentoPage::nodo($row->id_funzione,$row->dd_funzione);
 					$out[]=$appo;
 				}
-				$appo->aggiungiStrada($row->cod_strada, false);
+
+				$appo->aggiungiCompartimento($row->compartimento, false);
 			}
-			$radice = CanaleCompartimentoPage::nodo("tutto");
+			
+			$radice = FunzioneCompartimentoPage::nodo("tutto","tutto");
 			$radice->aperto=true;
 			$radice->figli=$out;
 			$risultato = array();
@@ -143,7 +150,7 @@ function listaCompartimentiStradeVuoti(){
 			return $risultato;
 }
 
-function elencoCanali(){
+function elencoUtenti(){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -154,18 +161,18 @@ function elencoCanali(){
 		return;
 	}
 	
-	$where = MngCanaleWs::getWhere($_GET);
+	$where = MngUtenteWs::getWhere($_GET);
 	
-	$query = "select count(*) from cmv.canale ".$where;
+	$query = "select count(*) from cmv.login ".$where;
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 	error_log("Query estrazione numero righe. ".$query);
 	$stmt -> execute();
 	$numeroRighe=$stmt->fetch(\PDO::FETCH_NUM);
 	
 	
-	$select = "select  id_canale ,descrizione_canale,token,indirizzo from cmv.canale ";
-	$orderby = MngCanaleWs::getOrderBy($_GET);
-	$limit = MngCanaleWs::getLimit($_GET,$numeroRighe);
+	$select = "select  idlogin ,username, password,cognome, nome from cmv.login ";
+	$orderby = MngUtenteWs::getOrderBy($_GET);
+	$limit = MngUtenteWs::getLimit($_GET,$numeroRighe);
 	$query = $select.$orderby.$limit;
 	
 	
@@ -185,7 +192,7 @@ function elencoCanali(){
 	return $out;
 }
 
-function getCanale($id){
+function getUtente($id){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -197,7 +204,7 @@ function getCanale($id){
 	}
 	
 	
-	$query = "select  id_canale ,descrizione_canale,token,indirizzo from cmv.canale where id_canale = :id";
+	$query = "select  idlogin ,username, password,cognome, nome from cmv.login where idlogin = :id";
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 	$stmt->bindParam(':id', $id);
 	error_log("Query estrazione numero righe. ".$query);
@@ -215,7 +222,7 @@ function getCanale($id){
 	return $out;
 }
 
-function deleteCanale($id){
+function deleteUtente($id){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -227,7 +234,7 @@ function deleteCanale($id){
 	}
 	
 	
-	$query = "delete from cmv.canale where id_canale = :id";
+	$query = "delete from cmv.login where idlogin = :id";
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 	$stmt->bindParam(':id', $id);
 	error_log("Query cancellazione riga. ".$query);
@@ -243,7 +250,7 @@ function deleteCanale($id){
 }
 
 
-function aggiungiCanale($canale){
+function aggiungiUtente($utente){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -255,11 +262,13 @@ function aggiungiCanale($canale){
 	}
 	
 	
-	$query = "insert into cmv.canale ( descrizione_canale,token,indirizzo) values(:descrizione_canale,:token,:indirizzo)";
+	$query = "insert into cmv.login ( username,password,cognome,nome) values(:username,:password,:cognome,:nome)";
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
-	$stmt->bindParam(':descrizione_canale', $canale->descrizione);
-	$stmt->bindParam(':token', $canale->token);
-	$stmt->bindParam(':indirizzo', $canale->indirizzo);
+	$stmt->bindParam(':username', $utente->username);
+	$stmt->bindParam(':password', sha1($utente->password));
+	$stmt->bindParam(':cognome', $utente->cognome);
+	$stmt->bindParam(':nome', $utente->nome);
+	
 	error_log("Query estrazione numero righe. ".$query);
 	$stmt -> execute();
 	
@@ -271,11 +280,11 @@ function aggiungiCanale($canale){
 		error_log($conn->pdo->errorCode());
 		
 	}
-	salvaCompartimentiStrade($_POST['nodiSelezionati'],$conn->pdo->lastInsertId());
+	salvaFunzioniCompartimenti($_POST['nodiSelezionati'],$utente->username, $conn->pdo->lastInsertId());
 	
 }
 
-function editCanale($canale){
+function editUtente($utente){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -286,13 +295,20 @@ function editCanale($canale){
 		return;
 	}
 	
+	$utenteAppo = getUtente($utente->idlogin);
 	
-	$query = "update cmv.canale set descrizione_canale=:descrizione_canale ,token = :token,indirizzo = :indirizzo where id_canale = :id_canale";
+	
+	$query = "update cmv.login set username=:username ,password = :password,cognome = :cognome, nome=:nome where idlogin = :idlogin";
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
-	$stmt->bindParam(':descrizione_canale', $canale->descrizione);
-	$stmt->bindParam(':token', $canale->token);
-	$stmt->bindParam(':indirizzo', $canale->indirizzo);
-	$stmt->bindParam(':id_canale', $canale->id);
+	$stmt->bindParam(':username', $utente->username);
+	//se la password è cambiata allora si cripta la nuova altrimenti si mette la vecchia senza fare il cripting
+	if($utenteAppo[0]->password != $utente->password)
+		$stmt->bindParam(':password', sha1($utente->password));
+	else 
+		$stmt->bindParam(':password', $utente->password);
+	$stmt->bindParam(':cognome', $utente->cognome);
+	$stmt->bindParam(':nome', $utente->nome);
+	$stmt->bindParam(':idlogin', $utente->idlogin);
 	error_log("Query estrazione numero righe. ".$query);
 	$stmt -> execute();
 	
@@ -304,22 +320,22 @@ function editCanale($canale){
 		error_log($conn->pdo->errorCode());
 		
 	}
-	salvaCompartimentiStrade($_POST['nodiSelezionati'],$canale->id);
+	salvaFunzioniCompartimenti($_POST['nodiSelezionati'],$utente->username,$utente->idlogin);
 	
 }
 
-function salvaCompartimentiStrade($stringa,$idCanale){
+function salvaFunzioniCompartimenti($stringa,$username,$idlogin){
 	$elenco = explode(",", $stringa);
-	cancellaRigheCompartimentoStrada($idCanale);
+	cancellaRigheFunzioniCompartimenti($idlogin);
 	for ($i = 0; $i < count($elenco); $i++){
 		if ( strpos ( $elenco[$i],"#")>0){
 			$riga = explode("#",$elenco[$i]);
-			salvaRigaCompartimentoStrada(trim($riga[0]),trim($riga[1]),$idCanale);
+			salvaRigaFunzioneCompartimento(trim($riga[0]),trim($riga[1]),$username,$idlogin);
 		}
 	}
 }
 
-function cancellaRigheCompartimentoStrada($idCanale){
+function cancellaRigheFunzioniCompartimenti($username){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -329,13 +345,13 @@ function cancellaRigheCompartimentoStrada($idCanale){
 		echo json_encode("");
 		return;
 	}
-	$query = "delete from filtro_canale where id_canale = :id_canale";
+	$query = "delete from utenti_funzioni where username = :username";
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
-	$stmt->bindParam(':id_canale', $idCanale);
+	$stmt->bindParam(':username', $username);
 	$stmt -> execute();
 }
 
-function salvaRigaCompartimentoStrada($compartimento,$strada,$idCanale){
+function salvaRigaFunzioneCompartimento($funzione,$compartimento,$username,$idlogin){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -345,23 +361,24 @@ function salvaRigaCompartimentoStrada($compartimento,$strada,$idCanale){
 		echo json_encode("");
 		return;
 	}
-	$query = "select count(*) from filtro_canale where compartimento = :compartimento and cod_strada = :strada and id_canale = :id_canale";
+	$query = "select count(*) from utenti_funzioni where compartimento = :compartimento and id_funzione = :id_funzione and username = :username and idlogin=:idlogin";
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 	$stmt->bindParam(':compartimento', $compartimento);
-	$stmt->bindParam(':strada', $strada);
-	$stmt->bindParam(':id_canale', $idCanale);
+	$stmt->bindParam(':id_funzione', $funzione);
+	$stmt->bindParam(':username', $username);
+	$stmt->bindParam(':idlogin', $idlogin);
 	$stmt -> execute();
 	$numeroRighe=$stmt->fetch(\PDO::FETCH_NUM);
 	
 	if ($numeroRighe[0]==0)
-		inserisciRiga($compartimento, $strada, $idCanale);
-		else
-			updateRiga($compartimento, $strada, $idCanale);
+		inserisciRiga($compartimento, $funzione, $username,$idlogin);
+	else
+		updateRiga($compartimento, $funzione, $username,$idlogin);
 			
 			
 }
 
-function inserisciRiga($compartimento,$strada,$idCanale){
+function inserisciRiga($compartimento, $funzione, $username,$idlogin){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -371,11 +388,12 @@ function inserisciRiga($compartimento,$strada,$idCanale){
 		echo json_encode("");
 		return;
 	}
-	$query = "insert into cmv.filtro_canale ( funzione,cod_strada,compartimento,id_canale) values('*',:cod_strada,:compartimento,:id_canale)";
+	$query = "insert into cmv.utenti_funzioni (compartimento, id_funzione, username,idlogin ) values(:compartimento,:id_funzione,:username,:idlogin)";
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 	$stmt->bindParam(':compartimento', $compartimento);
-	$stmt->bindParam(':cod_strada', $strada);
-	$stmt->bindParam(':id_canale', $idCanale);
+	$stmt->bindParam(':id_funzione', $funzione);
+	$stmt->bindParam(':username', $username);
+	$stmt->bindParam(':idlogin', $idlogin);
 	$stmt->execute();
 	error_log("Query estrazione numero righe. ".$query);
 	
@@ -390,7 +408,7 @@ function inserisciRiga($compartimento,$strada,$idCanale){
 	
 }
 
-function updateRiga($compartimento,$strada,$idCanale){
+function updateRiga($compartimento,$funzione,$username,$idlogin){
 	$configFile = __DIR__ . "/../config.php";
 	$config = include $configFile;
 	$conn = new ConnectionStatic($config);
@@ -400,14 +418,17 @@ function updateRiga($compartimento,$strada,$idCanale){
 		echo json_encode("");
 		return;
 	}
-	$query = "update cmv.filtro_canale set funzione='*',cod_strada = :strada_new,compartimento=:compartimento_new,id_canale=:id_canale_new where cod_strada = :strada and compartimento=:compartimento and id_canale=:id_canale ";
+	$query = "update cmv.utenti_funzioni set compartimento = :compartimento, id_funzione = :id_funzione, username = :username, idlogin=:idlogin where compartimento = :compartimento_new and id_funzione = :id_funzione_new and username = :username_new and idlogin = :idlogin_new ";
 	$stmt = $conn->pdo->prepare($query, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
 	$stmt->bindParam(':compartimento', $compartimento);
-	$stmt->bindParam(':strada', $strada);
-	$stmt->bindParam(':id_canale', $idCanale);
+	$stmt->bindParam(':id_funzione', $funzione);
+	$stmt->bindParam(':username', $username);
+	$stmt->bindParam(':idlogin', $idlogin);
 	$stmt->bindParam(':compartimento_new', $compartimento);
-	$stmt->bindParam(':strada_new', $strada);
-	$stmt->bindParam(':id_canale_new', $idCanale);
+	$stmt->bindParam(':id_funzione_new', $funzione);
+	$stmt->bindParam(':username_new', $username);
+	$stmt->bindParam(':idlogin_new', $idlogin);
+	
 	$stmt->execute();
 	error_log("Query estrazione numero righe. ".$query);
 	
@@ -423,49 +444,49 @@ function updateRiga($compartimento,$strada,$idCanale){
 }
 
 
-error_log("arrivato in CanaleWs");
+error_log("arrivato in UtenteWs");
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-	if (isset($_GET['azione']) && $_GET['azione']=='Compartimento' ) {
-		error_log("CanaleWs GET info Canali per compartimenti");
+	if (isset($_GET['azione']) && $_GET['azione']=='Funzioni' ) {
+		error_log("UtenteWs GET info Utente per funzioni");
 		if ($_GET['id']==null)
-			$out=listaCompartimentiStradeVuoti();
+			$out=listaFunzioniCompartimentiVuoti();
 		else 
-			$out=listaCompartimentiStrade($_GET['id']);
+			$out=listaFunzioniCompartimenti($_GET['id']);
 		echo json_encode($out);
-	}elseif (isset($_GET['azione']) && $_GET['azione']=='Canale' ) {
-		error_log("GET Elenco canali");
-		$out=elencoCanali();
+	}elseif (isset($_GET['azione']) && $_GET['azione']=='Utente' ) {
+		error_log("UtenteWS GET Elenco utenti");
+		$out=elencoUtenti();
 		echo json_encode($out);
 	}elseif (isset($_GET['azione']) && $_GET['azione']=='New' ) {
-		error_log("GET CanaleWs, New canale...");
-		$out=listaCompartimentiStradeVuoti();
+		error_log("GET UtenteWs, New utente...");
+		$out=listaFunzioniCompartimenti();
 		echo json_encode($out);
 	}elseif (isset($_GET['azione']) && $_GET['azione']=='Get' && isset($_GET['id'])) {
-		error_log("GET CanaleWs, get canale...");
-		$out=getCanale($_GET['id']);
+		error_log("GET UtenteWs, get utente...");
+		$out=getUtente($_GET['id']);
 		echo json_encode($out);
 	}elseif (isset($_GET['azione']) && $_GET['azione']=='Delete' && isset($_GET['id'])) {
-		error_log("GET CanaleWs, cancellazione canale...");
-		$out=deleteCanale($_GET['id']);
+		error_log("GET UtenteWs, cancellazione utente...");
+		$out=deleteUtente($_GET['id']);
 		echo json_encode($out);
 	}else{
-		error_log("GET ElencoCanali");
-		$out = elencoCanali();
+		error_log("GET ElencoUtenti");
+		$out = elencoUtenti();
 		echo json_encode($out);
 	}	
 	
 }elseif ($_SERVER['REQUEST_METHOD'] === 'POST'){
-	error_log("POST CanaleWs");
-	if (isset($_POST['descrizione']) && isset($_POST['token']) && isset($_POST['indirizzo']) && isset($_POST['azione']) && $_POST['azione']=='New') {
-		$c = new Canale($_POST);
-		error_log("POST CanaleWs, New ");
-		aggiungiCanale($c);		
+	error_log("POST UtenteWs");
+	if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['cognome']) && isset($_POST['nome']) && isset($_POST['azione']) && $_POST['azione']=='New') {
+		$c = new Utente($_POST);
+		error_log("POST UtenteWs, New ");
+		aggiungiUtente($c);		
 		$risultato = new RisultatoPost('Record salvato.', '');
 		echo json_encode($risultato);
-	}else if(isset($_POST['descrizione']) && isset($_POST['token']) && isset($_POST['indirizzo']) && isset($_POST['azione']) && $_POST['azione']=='Edit'){
-		$c = new Canale($_POST);
-		error_log("POST CanaleWs, Edit ");
-		editCanale($c);
+	}else if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['cognome']) && isset($_POST['nome']) && isset($_POST['azione']) && $_POST['azione']=='Edit'){
+		$c = new Utente($_POST);
+		error_log("POST UtenteWs, Edit ");
+		editUtente($c);
 		$risultato = new RisultatoPost('Record salvato.', '');
 		echo json_encode($risultato);
 	}

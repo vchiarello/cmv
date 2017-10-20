@@ -55,5 +55,13 @@ angular.module("cmv").config(function ($stateProvider, $urlRouterProvider) {
 	        url:'/manageCanale/:azione/:id',
 	        templateUrl: './html/ManageCanale.html',
 	        controller: 'manageCanale'
+	    }).state('listaUtenti', {
+	        url:'/listaUtenti',
+	        templateUrl: './html/listaUtenti.html',
+	        controller: 'listaUtenti'
+	    }).state('manageUtente', {
+	        url:'/manageUtente/:azione/:id',
+	        templateUrl: './html/ManageUtente.html',
+	        controller: 'manageUtente'
         });
 });
