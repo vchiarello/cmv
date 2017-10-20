@@ -280,8 +280,9 @@ function aggiungiUtente($utente){
 		error_log($conn->pdo->errorCode());
 		
 	}
-	salvaFunzioniCompartimenti($_POST['nodiSelezionati'],$utente->username, $conn->pdo->lastInsertId());
-	
+	$nuovoIdUtente = $conn->pdo->lastInsertId();
+	salvaFunzioniCompartimenti($_POST['nodiSelezionati'],$utente->username, $nuovoIdUtente);
+	return $nuovoIdUtente;
 }
 
 function editUtente($utente){
@@ -480,15 +481,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['cognome']) && isset($_POST['nome']) && isset($_POST['azione']) && $_POST['azione']=='New') {
 		$c = new Utente($_POST);
 		error_log("POST UtenteWs, New ");
-		aggiungiUtente($c);		
+		$idNuovoUtente = aggiungiUtente($c);	
+		$out=getUtente($idNuovoUtente);
 		$risultato = new RisultatoPost('Record salvato.', '');
-		echo json_encode($risultato);
+		echo json_encode($out);
 	}else if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['cognome']) && isset($_POST['nome']) && isset($_POST['azione']) && $_POST['azione']=='Edit'){
 		$c = new Utente($_POST);
 		error_log("POST UtenteWs, Edit ");
 		editUtente($c);
+		$out=getUtente($c->idlogin);
 		$risultato = new RisultatoPost('Record salvato.', '');
-		echo json_encode($risultato);
+		echo json_encode($out);
 	}
 	
 	

@@ -1,5 +1,5 @@
 //controller per la creazione degli item
-angular.module("cmv").controller("manageUtente", ['$scope', '$http','$stateParams', function ($scope, $http, $stateParams) {
+angular.module("cmv").controller("manageUtente", ['$scope', '$http','$stateParams', '$state', function ($scope, $http, $stateParams, $state) {
 
 	
 	function init() {
@@ -83,7 +83,17 @@ angular.module("cmv").controller("manageUtente", ['$scope', '$http','$stateParam
 		}).
 		then(function successCallback(response){
 			console.log("Utente correttamente salvato.");
-			$scope.risultato = response.data;
+			$scope.appo = response.data;
+			bootbox.alert({
+		        title: "Info",
+		        message: "Informazioni salvate correttamente.",
+		        callback: function (appo) {
+		        	$state.transitionTo("manageUtente",{azione: 'Edit', id: $scope.appo[0].idlogin});
+		        }
+		    });
+
+			
+			
 			
 		},
 		function errorCallback(response){alert("Errore. Utente NON salvato.")});

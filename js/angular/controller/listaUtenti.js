@@ -36,7 +36,7 @@ angular.module("cmv").controller("listaUtenti", ['$scope', '$http', function ($s
 		        title: "Notifica",
 		        message: $scope.risultato.messaggio
 		    });
-			getCanali();
+			getUtenti();
 		},
 		function errorCallback(response){alert("Errore nella gestione dei canali")});
     }
